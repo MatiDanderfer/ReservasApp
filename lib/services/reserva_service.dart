@@ -89,7 +89,7 @@ class ReservaService {
     }
     throw Exception('No se encontraron reservas');
   }
-
+  //busco desde la fecha de entrada, sin importar la fecha de salida
   Future<List<Reserva>> buscarDesdeInicio(String fechaInicio) async {
     final response = await http.get(
       Uri.parse('$baseUrl/buscarDesdeInicio?fechaInicio=$fechaInicio'),
@@ -100,4 +100,5 @@ class ReservaService {
     }
     throw Exception('No se encontraron reservas');
   }
+
 }
