@@ -9,8 +9,8 @@ class Reserva {
   final int senia;
   final int saldoPendiente;
   final int idHuesped;
-  final String nombreHuesped;
-  final String apellidoHuesped;
+  final String? nombreHuesped;
+  final String? apellidoHuesped;
 
   Reserva({
     required this.idReserva,
@@ -23,23 +23,36 @@ class Reserva {
     required this.senia,
     required this.saldoPendiente,
     required this.idHuesped,
-    required this.nombreHuesped,
-    required this.apellidoHuesped,
+    this.nombreHuesped,
+    this.apellidoHuesped,
   });
   factory Reserva.fromJson(Map<String, dynamic> json) {
-    return Reserva(
+    try{
+      print('idReserva: ${json['idReserva']}');
+      print('cantidadPersonas: ${json['cantidadPersonas']}');
+      print('monto: ${json['monto']}');
+      print('senia: ${json['senia']}');
+      print('saldoPendiente: ${json['saldoPendiente']}');
+      print('huespedId: ${json['huespedId']}');
+      return Reserva(
       idReserva: json['idReserva'],
       fechaEntrada: DateTime.parse(json['fechaEntrada']),
       fechaSalida: DateTime.parse(json['fechaSalida']),
-      cantidadPersonas: json['cantidadPersonas'],
+      cantidadPersonas: json['cantidadPersonas'] ?? 1,
       comentarios: json['comentarios'],
       estado: json['estado'],
-      monto: json['monto'],
-      senia: json['seña'],
-      saldoPendiente: json['saldoPendiente'],
-      idHuesped: json['idHuesped'],
+      monto: json['monto'] ?? 0,
+      senia: json['senia'] ?? 0,
+      saldoPendiente: json['saldoPendiente'] ?? 0,
+      idHuesped: json['huespedId'],
       nombreHuesped: json['nombreHuesped'],
       apellidoHuesped: json['apellidoHuesped'],
     );
+    } catch (e) {
+      print('Error al parsear Reserva: $e');
+      print('JSON problemático: $json');
+      rethrow;
+    }
+    
   }
 }

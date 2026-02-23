@@ -94,8 +94,11 @@ class ReservaService {
     final response = await http.get(
       Uri.parse('$baseUrl/buscarDesdeInicio?fechaInicio=$fechaInicio'),
     );
+    print('Status code: ${response.statusCode}'); // agregá esto
+    print('Body: ${response.body}');
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
+      print('Cantidad de reservas en JSON: ${data.length}');
       return data.map((json) => Reserva.fromJson(json)).toList();
     }
     throw Exception('No se encontraron reservas');
