@@ -5,6 +5,7 @@ import '../models/reserva.dart';
 import '../services/reserva_service.dart';
 import 'reserva_detalle_screen.dart';
 import 'reservas_screen.dart';
+import 'huesped_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -198,6 +199,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ).then((_) {
               _cargarProximasReservas();
             });
+          }
+          if (index == 3) {
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HuespedesScreen()),
+            );
           }
         },
       ),
