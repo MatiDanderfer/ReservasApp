@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:reservas_app/screens/main_screen.dart';
 import '../models/reserva.dart';
 import '../services/reserva_service.dart';
 import 'reserva_form_screen.dart';
@@ -78,6 +79,18 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
         title: const Text('Detalle de Reserva'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const MainScreen()),
+                (route) => false,
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

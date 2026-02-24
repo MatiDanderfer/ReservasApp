@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:reservas_app/screens/reserva_form_screen.dart';
+//import 'package:reservas_app/screens/reserva_form_screen.dart';
 import '../models/reserva.dart';
 import '../services/reserva_service.dart';
 import 'reserva_detalle_screen.dart';
-import 'reservas_screen.dart';
-import 'huesped_screen.dart';
+//import 'reservas_screen.dart';
+//import 'huesped_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -172,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-      bottomNavigationBar: BottomNavigationBar(
+      /*bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
@@ -207,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
         },
-      ),
+      ),*/
     );
   }
 

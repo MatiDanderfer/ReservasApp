@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import
 
 import 'package:flutter/material.dart';
+import 'package:reservas_app/screens/main_screen.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import '../models/reserva.dart';
@@ -65,6 +66,18 @@ class _ReservasScreenState extends State<ReservasScreen> {
         title: const Text('Reservas'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const MainScreen()),
+                (route) => false,
+              );
+            },
+          ),
+        ],
       ),
       body: _cargando
           ? const Center(child: CircularProgressIndicator())

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reservas_app/screens/main_screen.dart';
 import '../models/huesped.dart';
 import '../services/huesped_service.dart';
 
@@ -77,6 +78,18 @@ class _HuespedFormScreenState extends State<HuespedFormScreen> {
         title: Text(widget.huesped == null ? 'Nuevo Huésped' : 'Editar Huésped'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const MainScreen()),
+                (route) => false,
+              );
+            },
+          ),
+        ],
       ),
       body: Form(
         key: _formKey,
