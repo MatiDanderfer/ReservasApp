@@ -34,7 +34,7 @@ class ReservaService {
     if (response.statusCode == 200) {
       return Reserva.fromJson(jsonDecode(response.body));
     }
-    throw Exception(jsonDecode(response.body));
+    throw Exception(response.body);
   }
 
   Future<bool> eliminar(int id) async {
@@ -56,7 +56,7 @@ class ReservaService {
     if (response.statusCode == 200) {
       return Reserva.fromJson(jsonDecode(response.body));
     }
-    throw Exception(jsonDecode(response.body));
+    throw Exception(response.body);
   }
 
   Future<Reserva> cambiarEstado(int id, String nuevoEstado) async {
