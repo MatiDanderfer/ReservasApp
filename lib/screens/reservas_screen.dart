@@ -46,14 +46,18 @@ class _ReservasScreenState extends State<ReservasScreen> {
   // Verifica si un día está ocupado por alguna reserva
   bool _diaOcupado(DateTime dia) {
     return _todasReservas.any((r) =>
-        !dia.isBefore(r.fechaEntrada) && !dia.isAfter(r.fechaSalida));
+        r.estado != 'Cancelada' &&
+        !dia.isBefore(r.fechaEntrada) &&
+        !dia.isAfter(r.fechaSalida));
   }
 
   // Devuelve la reserva que ocupa un día específico
   Reserva? _reservaDelDia(DateTime dia) {
     try {
       return _todasReservas.firstWhere((r) =>
-          !dia.isBefore(r.fechaEntrada) && !dia.isAfter(r.fechaSalida));
+          r.estado != 'Cancelada' &&
+          !dia.isBefore(r.fechaEntrada) &&
+          !dia.isAfter(r.fechaSalida));
     } catch (e) {
       return null;
     }
@@ -66,6 +70,7 @@ class _ReservasScreenState extends State<ReservasScreen> {
         title: const Text('Reservas'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
@@ -84,8 +89,9 @@ class _ReservasScreenState extends State<ReservasScreen> {
           : Column(
               children: [
                 TableCalendar(
+                  locale: 'es_Ar',
                   firstDay: DateTime.utc(2024, 1, 1),
-                  lastDay: DateTime.utc(2030, 12, 31),
+                  lastDay: DateTime.utc(2050, 12, 31),
                   focusedDay: _focusedDay,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                   onDaySelected: (selectedDay, focusedDay) {

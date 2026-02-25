@@ -19,6 +19,8 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
   bool _cargando = true;
   DateTime? _fechaDesde;
   DateTime? _fechaHasta;
+  bool _soloFuturas = false;
+  bool _mostrarCanceladas = true;
 
   @override
   void initState() {
@@ -40,43 +42,55 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
     }
   }
 
-  void _filtrarPorFechas() {
-    if (_fechaDesde == null || _fechaHasta == null) return;
-    setState(() {
-      _reservasFiltradas = _reservas.where((r) =>
-        r.fechaEntrada.isAfter(_fechaDesde!.subtract(const Duration(days: 1))) &&
-        r.fechaSalida.isBefore(_fechaHasta!.add(const Duration(days: 1)))
-      ).toList();
-    });
-  }
+void _aplicarFiltros() {
+  final hoy = DateTime.now();
+  var filtradas = _reservas.where((r) {
+    if (!_mostrarCanceladas && r.estado == 'Cancelada') return false;
+    if (_soloFuturas && r.fechaEntrada.isBefore(hoy)) return false;
+    if (_fechaDesde != null && _fechaHasta != null) {
+      return r.fechaEntrada.isAfter(
+              _fechaDesde!.subtract(const Duration(days: 1))) &&
+          r.fechaSalida
+              .isBefore(_fechaHasta!.add(const Duration(days: 1)));
+    }
+    return true;
+  }).toList();
+  setState(() => _reservasFiltradas = filtradas);
+}
 
-  void _limpiarFiltro() {
-    setState(() {
-      _fechaDesde = null;
-      _fechaHasta = null;
-      _reservasFiltradas = _reservas;
-    });
-  }
+int get _montoTotal => _reservasFiltradas.fold(0, (sum, r) {
+  if (r.estado == 'Cancelada') return sum + r.senia;
+  return sum + r.monto;
+});
 
-  int get _montoTotal => _reservasFiltradas.fold(0, (sum, r) => sum + r.monto);
-  int get _saldoTotal => _reservasFiltradas.fold(0, (sum, r) => sum + r.saldoPendiente);
+int get _saldoTotal => _reservasFiltradas.fold(0, (sum, r) {
+  if (r.estado == 'Cancelada') return sum; // cancelada no tiene saldo pendiente
+  return sum + r.saldoPendiente;
+});
 
   Future<void> _seleccionarFecha(bool esDesde) async {
     final fecha = await showDatePicker(
       context: context,
       initialDate: esDesde ? (_fechaDesde ?? DateTime.now()) : (_fechaHasta ?? DateTime.now()),
       firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
+      lastDate: DateTime(2050),
     );
     if (fecha != null) {
       setState(() {
-        if (esDesde) _fechaDesde = fecha;
-        else _fechaHasta = fecha;
+        if (esDesde) {_fechaDesde = fecha;}
+        else { _fechaHasta = fecha;}
       });
       if (_fechaDesde != null && _fechaHasta != null) {
-        _filtrarPorFechas();
+        _aplicarFiltros();
       }
     }
+  }
+    void _limpiarFiltroFechas() {
+    setState(() {
+      _fechaDesde = null;
+      _fechaHasta = null;
+    });
+    _aplicarFiltros();
   }
 
   @override
@@ -86,6 +100,7 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
         title: const Text('Todas las Reservas'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
@@ -103,14 +118,41 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Filtro por fechas
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
+                      // Toggle canceladas
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Mostrar canceladas'),
+                          Switch(
+                            value: _mostrarCanceladas,
+                            onChanged: (value) {
+                              setState(() => _mostrarCanceladas = value);
+                              _aplicarFiltros();
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Solo desde hoy'),
+                            Switch(
+                              value: _soloFuturas,
+                              onChanged: (value) {
+                                setState(() => _soloFuturas = value);
+                                _aplicarFiltros();
+                              },
+                            ),
+                          ],
+                        ),
+                      // Filtro fechas
                       Row(
                         children: [
-                          Expanded(
+                          Expanded( 
                             child: OutlinedButton.icon(
                               onPressed: () => _seleccionarFecha(true),
                               icon: const Icon(Icons.calendar_today, size: 16),
@@ -131,12 +173,12 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
                           ),
                           if (_fechaDesde != null || _fechaHasta != null)
                             IconButton(
-                              onPressed: _limpiarFiltro,
+                              onPressed: _limpiarFiltroFechas,
                               icon: const Icon(Icons.clear, color: Colors.red),
                             ),
                         ],
                       ),
-                      // Resumen de montos
+                      // Resumen montos
                       if (_fechaDesde != null && _fechaHasta != null)
                         Container(
                           margin: const EdgeInsets.only(top: 12),
@@ -151,28 +193,34 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
                               Column(
                                 children: [
                                   const Text('Reservas',
-                                      style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12)),
                                   Text('${_reservasFiltradas.length}',
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.bold, fontSize: 16)),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
                                 ],
                               ),
                               Column(
                                 children: [
                                   const Text('Monto total',
-                                      style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12)),
                                   Text('\$$_montoTotal',
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.bold, fontSize: 16)),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
                                 ],
                               ),
                               Column(
                                 children: [
                                   const Text('Saldo pendiente',
-                                      style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12)),
                                   Text('\$$_saldoTotal',
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.bold, fontSize: 16)),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
                                 ],
                               ),
                             ],
@@ -181,7 +229,6 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
                     ],
                   ),
                 ),
-                // Lista
                 Expanded(
                   child: _reservasFiltradas.isEmpty
                       ? const Center(child: Text('No hay reservas en ese rango'))
@@ -199,19 +246,24 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
                                         ReservaDetalleScreen(reserva: reserva),
                                   ),
                                 );
-                                _cargarReservas();
+                                await _cargarReservas();
                               },
                               child: Card(
                                 margin: const EdgeInsets.only(bottom: 12),
                                 child: ListTile(
                                   title: Text(
                                     '${reserva.nombreHuesped ?? ''} ${reserva.apellidoHuesped ?? ''}',
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   subtitle: Text(
-                                    'Entrada: ${DateFormat('dd/MM/yyyy').format(reserva.fechaEntrada)}\n'
-                                    'Salida: ${DateFormat('dd/MM/yyyy').format(reserva.fechaSalida)}\n'
-                                    'Monto: \$${reserva.monto} | Saldo: \$${reserva.saldoPendiente}',
+                                    reserva.estado == 'Cancelada'
+                                        ? 'Entrada: ${DateFormat('dd/MM/yyyy').format(reserva.fechaEntrada)}\n'
+                                            'Salida: ${DateFormat('dd/MM/yyyy').format(reserva.fechaSalida)}\n'
+                                            'Seña cobrada: \$${reserva.senia}'
+                                        : 'Entrada: ${DateFormat('dd/MM/yyyy').format(reserva.fechaEntrada)}\n'
+                                            'Salida: ${DateFormat('dd/MM/yyyy').format(reserva.fechaSalida)}\n'
+                                            'Monto: \$${reserva.monto} | Saldo: \$${reserva.saldoPendiente}',
                                   ),
                                   trailing: Container(
                                     padding: const EdgeInsets.symmetric(
@@ -222,7 +274,8 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
                                     ),
                                     child: Text(
                                       reserva.estado,
-                                      style: const TextStyle(color: Colors.white),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     ),
                                   ),
                                 ),
@@ -244,6 +297,8 @@ class _ListaReservasScreenState extends State<ListaReservasScreen> {
         return Colors.red;
       case 'Señada':
         return Colors.orange;
+      case 'Pagada':
+        return Colors.purple;
       default:
         return Colors.grey;
     }

@@ -3,6 +3,7 @@ import 'package:reservas_app/screens/main_screen.dart';
 import '../models/huesped.dart';
 import '../services/huesped_service.dart';
 import 'huesped_form_screen.dart';
+import 'huesped_detalle_screen.dart';
 
 class HuespedesScreen extends StatefulWidget {
   const HuespedesScreen({super.key});
@@ -92,6 +93,7 @@ class _HuespedesScreenState extends State<HuespedesScreen> {
         title: const Text('Huéspedes'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
@@ -169,6 +171,14 @@ class _HuespedesScreenState extends State<HuespedesScreen> {
                     leading: const Icon(Icons.person),
                     title: Text('${huesped.nombre} ${huesped.apellido}'),
                     subtitle: Text(huesped.telefono ?? 'Sin teléfono'),
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HuespedDetalleScreen(huesped: huesped),
+                        ),
+                      );
+                    },
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

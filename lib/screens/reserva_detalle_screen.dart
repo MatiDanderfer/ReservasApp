@@ -28,8 +28,8 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cancelar reserva'),
-        content: const Text('¿Estás seguro que querés cancelar esta reserva?'),
+        title: const Text('Borrar reserva'),
+        content: const Text('¿Estás seguro que querés borrar esta reserva?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -38,7 +38,7 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Sí, cancelar'),
+            child: const Text('Sí, borrar'),
           ),
         ],
       ),
@@ -48,7 +48,7 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
         await _reservaService.eliminar(_reserva.idReserva);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Reserva cancelada correctamente')),
+            const SnackBar(content: Text('Reserva borrada correctamente')),
           );
           Navigator.pop(context, true);
         }
@@ -79,6 +79,7 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
         title: const Text('Detalle de Reserva'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
@@ -112,7 +113,7 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: _editar,
+                    onPressed: _reserva.estado == 'Cancelada' ? null : _editar,
                     icon: const Icon(Icons.edit),
                     label: const Text('Editar'),
                     style: OutlinedButton.styleFrom(
@@ -123,9 +124,9 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: _eliminar,
+                    onPressed: _reserva.estado == 'Cancelada' ? null : _eliminar,
                     icon: const Icon(Icons.cancel),
-                    label: const Text('Cancelar reserva'),
+                    label: const Text('Borrar reserva'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
@@ -174,6 +175,9 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
         break;
       case 'Señada':
         color = Colors.orange;
+        break;
+      case 'Pagada':
+        color = Colors.purple;
         break;
       default:
         color = Colors.grey;

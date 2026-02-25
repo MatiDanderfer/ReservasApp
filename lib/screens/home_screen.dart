@@ -34,19 +34,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
       // Reserva en curso: hoy está entre fechaEntrada y fechaSalida
       final enCurso = todasReservas.where((r) =>
-        !hoy.isBefore(r.fechaEntrada) && !hoy.isAfter(r.fechaSalida)
+        !hoy.isBefore(r.fechaEntrada) &&
+        hoy.isBefore(r.fechaSalida.add(const Duration(days: 1)))
+        //!hoy.isAfter(r.fechaSalida)
       ).firstOrNull;
 
       // Próximas: fechaEntrada es posterior a hoy, excluye la en curso
       final proximas = todasReservas
-          .where((r) => r.fechaEntrada.isAfter(hoy) && r != enCurso)
-          .toList()
-          ..sort((a, b) => a.fechaEntrada.compareTo(b.fechaEntrada))
-          ..take(5); // esto no funciona después del sort
-
+          .where((r) => r.fechaEntrada.isAfter(hoy) && r != enCurso && r.estado != 'Cancelada')
+          .toList();
+          proximas.sort((a, b) => a.fechaEntrada.compareTo(b.fechaEntrada));
       setState(() {
         _reservaEnCurso = enCurso;
-        _proximasReservas = proximas;
+        _proximasReservas = proximas.take(5).toList();
         _cargando = false;
       });
     } catch (e) {
@@ -61,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Gestión de Reservas'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        centerTitle: true,
       ),
       body: _cargando
           ? const Center(child: CircularProgressIndicator())
@@ -172,42 +173,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-      /*bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month), label: 'Reservas'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Nueva Reserva'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_search), label: 'Huéspedes'),
-        ],
-        currentIndex: 0,
-        onTap: (index) {
-          if (index == 1) {
-            Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ReservasScreen()),
-            ).then((_) {
-              _cargarProximasReservas();
-            });
-          }
-          if (index == 2) {
-            Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ReservaFormScreen()),
-            ).then((_) {
-              _cargarProximasReservas();
-            });
-          }
-          if (index == 3) {
-            Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HuespedesScreen()),
-            );
-          }
-        },
-      ),*/
     );
   }
 
@@ -219,6 +184,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return Colors.red;
       case 'Señada':
         return Colors.orange;
+      case 'Pagada':
+        return Colors.purple;
       default:
         return Colors.grey;
     }

@@ -66,7 +66,7 @@ class _ReservaFormScreenState extends State<ReservaFormScreen> {
           ? (_fechaEntrada ?? DateTime.now())
           : (_fechaSalida ?? _fechaEntrada ?? DateTime.now()),
       firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
+      lastDate: DateTime(2050),
     );
     if (fecha != null) {
       setState(() {
@@ -262,6 +262,7 @@ class _ReservaFormScreenState extends State<ReservaFormScreen> {
                 DropdownMenuItem(value: 'Confirmada', child: Text('Confirmada')),
                 DropdownMenuItem(value: 'Señada', child: Text('Señada')),
                 DropdownMenuItem(value: 'Cancelada', child: Text('Cancelada')),
+                DropdownMenuItem(value: 'Pagada', child: Text('Pagada')),
               ],
               onChanged: (value) => setState(() => _estado = value!),
             ),
