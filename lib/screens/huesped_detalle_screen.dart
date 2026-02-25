@@ -73,9 +73,11 @@ class _HuespedDetalleScreenState extends State<HuespedDetalleScreen> {
           Navigator.pop(context, true);
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        if (mounted) {
+           ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${e.toString()}')),
+          );
+        }
       }
     }
   }

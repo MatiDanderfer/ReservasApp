@@ -79,9 +79,11 @@ class _HuespedesScreenState extends State<HuespedesScreen> {
           );
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        if (mounted){
+          ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+          );
+        }
       }
     }
   }

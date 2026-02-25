@@ -64,10 +64,12 @@ class _HuespedFormScreenState extends State<HuespedFormScreen> {
         Navigator.pop(context, huesped);
       }
     } catch (e) {
-      setState(() => _guardando = false);
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted){
+        setState(() => _guardando = false);
+        ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+        );
+      }
     }
   }
 

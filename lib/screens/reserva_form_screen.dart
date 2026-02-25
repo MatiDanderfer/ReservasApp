@@ -135,10 +135,12 @@ class _ReservaFormScreenState extends State<ReservaFormScreen> {
         Navigator.pop(context, true);
       }
     } catch (e) {
-      setState(() => _guardando = false);
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted){
+        setState(() => _guardando = false);
+        ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+        );
+      }
     }
   }
 
@@ -253,7 +255,7 @@ class _ReservaFormScreenState extends State<ReservaFormScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _estado,
+              initialValue: _estado,
               decoration: const InputDecoration(
                 labelText: 'Estado',
                 border: OutlineInputBorder(),

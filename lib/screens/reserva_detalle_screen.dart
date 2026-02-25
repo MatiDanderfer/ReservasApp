@@ -53,9 +53,11 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
           Navigator.pop(context, true);
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
+        if (mounted) {
+           ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${e.toString()}')),
+          );
+        }
       }
     }
   }
@@ -67,6 +69,7 @@ class _ReservaDetalleScreenState extends State<ReservaDetalleScreen> {
         builder: (context) => ReservaFormScreen(reserva: _reserva),
       ),
     );
+    if (!mounted) {return;}
     if (resultado == true) {
       Navigator.pop(context, true);
     }

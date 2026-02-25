@@ -27,13 +27,6 @@ class Reserva {
     this.apellidoHuesped,
   });
   factory Reserva.fromJson(Map<String, dynamic> json) {
-    try{
-      print('idReserva: ${json['idReserva']}');
-      print('cantidadPersonas: ${json['cantidadPersonas']}');
-      print('monto: ${json['monto']}');
-      print('senia: ${json['senia']}');
-      print('saldoPendiente: ${json['saldoPendiente']}');
-      print('huespedId: ${json['huespedId']}');
       return Reserva(
       idReserva: json['idReserva'],
       fechaEntrada: DateTime.parse(json['fechaEntrada']),
@@ -48,11 +41,5 @@ class Reserva {
       nombreHuesped: json['nombreHuesped'],
       apellidoHuesped: json['apellidoHuesped'],
     );
-    } catch (e) {
-      print('Error al parsear Reserva: $e');
-      print('JSON problemático: $json');
-      rethrow;
-    }
-    
   }
 }
