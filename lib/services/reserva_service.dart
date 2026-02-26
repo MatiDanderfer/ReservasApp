@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/reserva.dart';
 
 class ReservaService {
-  final String baseUrl = 'http://10.0.2.2:5011/api/reserva';
+  final String baseUrl = 'http://192.168.0.15:5011/api/reserva';
 
   Future<List<Reserva>> listarTodas() async {
     final response = await http.get(Uri.parse('$baseUrl/listar'));

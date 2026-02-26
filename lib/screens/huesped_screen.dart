@@ -96,6 +96,16 @@ class _HuespedesScreenState extends State<HuespedesScreen> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         centerTitle: true,
+        leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+            (route) => false,
+          );
+        },
+      ),
         actions: [
           IconButton(
             icon: const Icon(Icons.home),

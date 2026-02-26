@@ -45,19 +45,27 @@ class _ReservasScreenState extends State<ReservasScreen> {
 
   // Verifica si un día está ocupado por alguna reserva
   bool _diaOcupado(DateTime dia) {
-    return _todasReservas.any((r) =>
-        r.estado != 'Cancelada' &&
-        !dia.isBefore(r.fechaEntrada) &&
-        !dia.isAfter(r.fechaSalida));
+    final diaSinHora = DateTime(dia.year, dia.month, dia.day);
+    return _todasReservas.any((r) {
+      final entradaSinHora = DateTime(r.fechaEntrada.year, r.fechaEntrada.month, r.fechaEntrada.day);
+      final salidaSinHora = DateTime(r.fechaSalida.year, r.fechaSalida.month, r.fechaSalida.day);
+      return r.estado != 'Cancelada' &&
+          !diaSinHora.isBefore(entradaSinHora) &&
+          !diaSinHora.isAfter(salidaSinHora);
+    });
   }
 
   // Devuelve la reserva que ocupa un día específico
   Reserva? _reservaDelDia(DateTime dia) {
+    final diaSinHora = DateTime(dia.year, dia.month, dia.day);
     try {
-      return _todasReservas.firstWhere((r) =>
-          r.estado != 'Cancelada' &&
-          !dia.isBefore(r.fechaEntrada) &&
-          !dia.isAfter(r.fechaSalida));
+      return _todasReservas.firstWhere((r) {
+        final entradaSinHora = DateTime(r.fechaEntrada.year, r.fechaEntrada.month, r.fechaEntrada.day);
+        final salidaSinHora = DateTime(r.fechaSalida.year, r.fechaSalida.month, r.fechaSalida.day);
+        return r.estado != 'Cancelada' &&
+            !diaSinHora.isBefore(entradaSinHora) &&
+            !diaSinHora.isAfter(salidaSinHora);
+      });
     } catch (e) {
       return null;
     }
@@ -71,6 +79,16 @@ class _ReservasScreenState extends State<ReservasScreen> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+              (route) => false,
+            );
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.home),
