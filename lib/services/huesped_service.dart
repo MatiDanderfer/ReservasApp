@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/huesped.dart';
 
 class HuespedService {
-  final String baseUrl = 'http://192.168.0.15:5011/api/huesped';
+  final String baseUrl = 'https://reservas-hotel-gx8v.onrender.com/api/huesped';
 
   Future<List<Huesped>> listarTodos() async {
     final response = await http.get(Uri.parse('$baseUrl/listar'));
